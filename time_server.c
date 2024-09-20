@@ -68,7 +68,7 @@ int main() {
 	}
 	
 	int option = 0;
-	if(setsocketopt(socket_listen, IPPROTO_IPV6, IPV6_V6ONLY, (void*) &option, sizeof(option))){
+	if(setsockopt(socket_listen, IPPROTO_IPV6, IPV6_V6ONLY, (void*) &option, sizeof(option))){
 	fprintf(stderr, "setsockopt() failed. (%d) \n", GETSOCKETERRNO());
 	return 1;
 	}
