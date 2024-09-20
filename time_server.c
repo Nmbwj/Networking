@@ -5,6 +5,11 @@
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
+#if !defined(IPV6_V6ONLY)
+#define IPV6_V6ONLY 27
+#endif
+
 #pragma comment(lib, "ws2_32.lib")
 
 #else
@@ -47,7 +52,7 @@ int main() {
 	printf("configuring local address ... \n");
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
+	hints.ai_family = AF_INET6;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 	
@@ -61,7 +66,13 @@ int main() {
 		fprintf(stderr, "socket() faild. (%d) \n", GETSOCKETERRNO());
 		return 1;
 	}
-
+	
+	int option = 0;
+	if(setsocketopt(socket_listen, IPPROTO_IPV6, IPV6_V6ONLY, (void*) &option, sizeof(option))){
+	fprintf(stderr, "setsockopt() failed. (%d) \n", GETSOCKETERRNO());
+	return 1;
+	}
+	
 	printf("Binding socket to local address... \n");
 	
 	if (bind(socket_listen, bind_address->ai_addr, bind_address->ai_addrlen)) {
